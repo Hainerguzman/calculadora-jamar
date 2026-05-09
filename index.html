@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Descuentos · JAMAR</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400&family=Nunito:wght@900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --jamar-red:#F52020;
+  --jamar-red-dark:#A8181F;
+  --jamar-red-dim:rgba(212,32,42,0.1);
+  --jamar-red-border:rgba(212,32,42,0.28);
+  --bg:#050D1E;
+  --surface:#0A1628;
+  --surface2:#0F1E35;
+  --surface3:#142440;
+  --border:rgba(255,255,255,0.065);
+  --border-hi:rgba(255,255,255,0.12);
+  --text:#F0F2FF;
+  --text-2:rgba(240,242,255,0.5);
+  --text-3:rgba(240,242,255,0.28);
+  --green:#1FD07A;
+  --green-dim:rgba(31,208,122,0.07);
+  --green-border:rgba(31,208,122,0.18);
+  --cop-accent:#F5A623;
+  --usd-accent:#60A5FA;
+}
+body{
+  font-family:'Inter',-apple-system,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:40px 16px 32px;
+  background-image:
+    radial-gradient(ellipse 70% 45% at 50% 0%, rgba(212,32,42,0.09) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 30% at 80% 90%, rgba(212,32,42,0.04) 0%, transparent 60%);
+}
+.logo-area{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:32px;}
+.logo-sep{width:1px;height:28px;background:rgba(245,32,32,0.3);}
+.logo-sub{font-size:11px;font-weight:500;letter-spacing:.06em;color:var(--text-3);text-transform:uppercase;line-height:1.4;}
+.header{text-align:center;margin-bottom:32px}
+h1{font-size:32px;font-weight:800;letter-spacing:-.04em;line-height:1.15;color:var(--text);margin-bottom:10px;}
+h1 span{color:var(--jamar-red)}
+.subtitle{font-size:14px;color:var(--text-2);line-height:1.65}
+.card{width:100%;max-width:460px;background:var(--surface);border:1px solid var(--border);border-radius:24px;overflow:hidden;}
+.card-top{background:var(--jamar-red);padding:6px 28px;display:flex;align-items:center;justify-content:space-between;}
+.card-top-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,0.75);}
+.card-top-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.4);}
+.card-body{padding:26px 28px 24px}
+.toggle-wrap{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:4px;gap:4px;margin-bottom:26px;}
+.tog-btn{flex:1;padding:10px 8px;border:none;background:transparent;font-family:inherit;font-size:13px;font-weight:600;border-radius:9px;cursor:pointer;color:var(--text-3);transition:all .22s ease;display:flex;align-items:center;justify-content:center;gap:7px;}
+.tog-btn .flag{font-size:15px;line-height:1}
+.tog-btn.active{background:var(--surface3);box-shadow:0 1px 4px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.05);}
+.tog-btn.active.cop{color:var(--cop-accent)}
+.tog-btn.active.usd{color:var(--usd-accent)}
+.field{margin-bottom:16px}
+.field-label{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-2);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.field-label .dot{width:5px;height:5px;border-radius:50%;background:var(--jamar-red);opacity:.6;}
+.input-row{position:relative}
+.sym{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:15px;font-weight:500;color:var(--text-3);pointer-events:none;transition:color .2s;}
+.field input{width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:15px 16px 15px 34px;font-family:inherit;font-size:22px;font-weight:600;color:var(--text);outline:none;transition:all .2s ease;-moz-appearance:textfield;}
+.field input::-webkit-outer-spin-button,.field input::-webkit-inner-spin-button{-webkit-appearance:none}
+.field input:focus{background:rgba(255,255,255,0.05);border-color:rgba(212,32,42,.4);box-shadow:0 0 0 3px rgba(212,32,42,.08);}
+.field input::placeholder{color:var(--text-3)}
+.divider{display:flex;align-items:center;gap:10px;margin:20px 0}
+.div-line{flex:1;height:1px;background:var(--border)}
+.div-txt{font-size:10px;color:var(--text-3);letter-spacing:.1em;text-transform:uppercase;}
+.result{background:var(--jamar-red-dim);border:1px solid var(--jamar-red-border);border-radius:16px;padding:26px 20px 20px;text-align:center;transition:all .3s ease;position:relative;overflow:hidden;}
+.result.empty{background:rgba(255,255,255,.02);border-color:var(--border);}
+.result.error{background:rgba(212,32,42,.06);border-color:rgba(212,32,42,.2);}
+.res-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--jamar-red);opacity:.75;margin-bottom:6px;}
+.result.empty .res-label,.result.error .res-label{color:var(--text-3);opacity:1;}
+.res-value{font-size:58px;font-weight:900;letter-spacing:-.045em;color:var(--jamar-red);line-height:1;margin-bottom:6px;transition:color .25s;}
+.result.empty .res-value{color:var(--text-3);font-size:44px;letter-spacing:0;font-weight:300;}
+.result.error .res-value{color:var(--jamar-red);font-size:14px;font-weight:500;line-height:1.4;opacity:.8;}
+.res-detail{font-size:12px;color:var(--text-2)}
+.res-precision{font-size:11px;color:rgba(212,32,42,.5);margin-top:8px;font-family:'Courier New',monospace;letter-spacing:.02em;}
+.result.empty .res-precision,.result.error .res-precision{display:none}
+.copy-btn{margin-top:14px;background:rgba(212,32,42,.12);border:1px solid rgba(212,32,42,.25);color:var(--jamar-red);font-family:inherit;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:8px 22px;border-radius:8px;cursor:pointer;transition:all .18s ease;}
+.copy-btn:hover{background:rgba(212,32,42,.2);border-color:rgba(212,32,42,.4)}
+.copy-btn:active{transform:scale(.97)}
+.result.empty .copy-btn,.result.error .copy-btn{display:none}
+.verif{background:var(--green-dim);border:1px solid var(--green-border);border-radius:12px;padding:12px 16px;display:flex;align-items:flex-start;gap:10px;margin-top:12px;opacity:0;transform:translateY(5px);transition:opacity .3s ease,transform .3s ease;pointer-events:none;}
+.verif.show{opacity:1;transform:translateY(0);pointer-events:auto}
+.verif-icon{width:18px;height:18px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.verif-icon svg{width:10px;height:10px}
+.verif-title{font-size:12px;font-weight:600;color:var(--green);margin-bottom:2px}
+.verif-sub{font-size:11px;color:rgba(31,208,122,.5);font-family:'Courier New',monospace;word-break:break-all;}
+.signature{max-width:460px;width:100%;margin-top:28px;display:flex;align-items:center;justify-content:center;gap:0;flex-direction:column;}
+.sig-line{width:40px;height:1px;background:linear-gradient(90deg,transparent,rgba(212,32,42,.4),transparent);margin-bottom:12px;}
+.sig-by{font-size:9px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--text-3);margin-bottom:4px;}
+.sig-name{font-size:12px;font-weight:400;letter-spacing:.05em;color:rgba(240,242,255,.32);font-style:italic;}
+.sig-name strong{font-weight:500;font-style:normal;color:rgba(240,242,255,.38);letter-spacing:.03em;}
+.sig-role{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(212,32,42,.4);margin-top:3px;font-weight:600;}
+@keyframes pop{0%{transform:scale(.88);opacity:0}60%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+.pop{animation:pop .25s cubic-bezier(.34,1.56,.64,1) forwards}
+@media(max-width:480px){body{padding:24px 12px}.card-body{padding:20px 18px}h1{font-size:26px}.res-value{font-size:46px}}
+</style>
+</head>
+<body>
+<div class="logo-area">
+  <svg width="90" height="90" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg" style="border-radius:14px;flex-shrink:0">
+    <rect width="90" height="90" rx="14" fill="#F52020"/>
+    <text x="45" y="56" text-anchor="middle" font-family="'Nunito','Arial Rounded MT Bold','Varela Round',Arial,sans-serif" font-size="30" font-weight="900" fill="white" letter-spacing="-0.3">Jamar</text>
+    <text x="79" y="36" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="white">®</text>
+  </svg>
+  <div class="logo-sep"></div>
+  <div class="logo-sub">Herramientas<br>Comerciales</div>
+</div>
+<div class="header">
+  <h1>Calculadora de<br><span>Descuento Exacto</span></h1>
+  <p class="subtitle">Ingresa el precio lista y el precio objetivo<br>para obtener el porcentaje de descuento preciso</p>
+</div>
+<div class="card">
+  <div class="card-top">
+    <span class="card-top-label">Calculadora activa</span>
+    <div style="display:flex;gap:5px;align-items:center">
+      <div class="card-top-dot"></div>
+      <div class="card-top-dot" style="opacity:.5"></div>
+      <div class="card-top-dot" style="opacity:.25"></div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="toggle-wrap">
+      <button class="tog-btn cop active" id="btn-cop" onclick="setCur('COP')">
+        <span class="flag">🇨🇴</span> Peso Colombiano
+      </button>
+      <button class="tog-btn usd" id="btn-usd" onclick="setCur('USD')">
+        <span class="flag">🇺🇸</span> Dólar Americano
+      </button>
+    </div>
+    <div class="field">
+      <label class="field-label"><span class="dot"></span>Precio de Lista</label>
+      <div class="input-row">
+        <span class="sym" id="sym1">$</span>
+        <input type="number" id="lista" placeholder="0" oninput="calc()" autocomplete="off" min="0">
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label"><span class="dot"></span>Precio Objetivo (Oferta)</label>
+      <div class="input-row">
+        <span class="sym" id="sym2">$</span>
+        <input type="number" id="oferta" placeholder="0" oninput="calc()" autocomplete="off" min="0">
+      </div>
+    </div>
+    <div class="divider">
+      <div class="div-line"></div>
+      <div class="div-txt">resultado</div>
+      <div class="div-line"></div>
+    </div>
+    <div class="result empty" id="result">
+      <div class="res-label" id="res-label">% Descuento Exacto</div>
+      <div class="res-value" id="res-val">—</div>
+      <div class="res-detail" id="res-det">Ingresa los precios para calcular</div>
+      <div class="res-precision" id="res-prec"></div>
+      <button class="copy-btn" onclick="copiar()">Copiar % exacto</button>
+    </div>
+    <div class="verif" id="verif">
+      <div class="verif-icon">
+        <svg viewBox="0 0 10 8" fill="none" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="1,4 3.8,7 9,1"/>
+        </svg>
+      </div>
+      <div>
+        <div class="verif-title">Precio verificado exacto</div>
+        <div class="verif-sub" id="verif-sub"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="signature">
+  <div class="sig-line"></div>
+  <div class="sig-by">Desarrollado por</div>
+  <div class="sig-name"><strong>Hainer Guzmán</strong></div>
+  <div class="sig-role">JAMAR</div>
+</div>
+<script>
+let cur='COP', lastPct='';
+function setCur(c){cur=c;document.getElementById('btn-cop').classList.toggle('active',c==='COP');document.getElementById('btn-usd').classList.toggle('active',c==='USD');calc();}
+function fmt(v){if(cur==='USD')return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',minimumFractionDigits:2,maximumFractionDigits:2}).format(v);return new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0,maximumFractionDigits:0}).format(v);}
+function calc(){
+  const lista=parseFloat(document.getElementById('lista').value);
+  const oferta=parseFloat(document.getElementById('oferta').value);
+  const R=document.getElementById('result');
+  const rv=document.getElementById('res-val');
+  const rd=document.getElementById('res-det');
+  const rl=document.getElementById('res-label');
+  const rp=document.getElementById('res-prec');
+  const vr=document.getElementById('verif');
+  const vs=document.getElementById('verif-sub');
+  if(isNaN(lista)||isNaN(oferta)||lista<=0||oferta<=0){R.className='result empty';rv.textContent='—';rl.textContent='% Descuento Exacto';rd.textContent='Ingresa los dos precios para calcular';rp.textContent='';vr.classList.remove('show');lastPct='';return;}
+  if(oferta>=lista){R.className='result error';rl.textContent='Verificar datos';rv.textContent='El precio oferta debe ser menor al precio lista';rd.textContent='';rp.textContent='';vr.classList.remove('show');lastPct='';return;}
+  const dsc=(lista-oferta)/lista;
+  const pct=dsc*100;
+  const ahorro=lista-oferta;
+  const verificado=lista*(1-dsc);
+  const diff=Math.abs(verificado-oferta);
+  const pctStr=pct.toFixed(10);
+  const pctDisp=parseFloat(pct.toFixed(4))+'%';
+  lastPct=pctStr+'%';
+  R.className='result';
+  rl.textContent='% Descuento Exacto';
+  rv.classList.remove('pop');void rv.offsetWidth;rv.classList.add('pop');
+  rv.textContent=pctDisp;
+  rd.textContent='Ahorro de '+fmt(ahorro)+' sobre precio lista '+fmt(lista);
+  rp.textContent='Precisión exacta: '+pctStr+'%';
+  if(diff<0.001){vr.classList.add('show');vs.textContent=fmt(lista)+' × '+(1-dsc).toFixed(10)+' = '+fmt(verificado);}
+  else{vr.classList.remove('show');}
+}
+function copiar(){if(!lastPct)return;navigator.clipboard.writeText(lastPct).then(()=>{const b=document.querySelector('.copy-btn');const orig=b.textContent;b.textContent='Copiado ✓';b.style.background='rgba(31,208,122,.12)';b.style.borderColor='rgba(31,208,122,.3)';b.style.color='#1FD07A';setTimeout(()=>{b.textContent=orig;b.style.background='';b.style.borderColor='';b.style.color='';},2000);});}
+</script>
+</body>
+  </html>
